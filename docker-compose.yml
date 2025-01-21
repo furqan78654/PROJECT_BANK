@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"  # Expose MongoDB port to host (optional, you can leave it out if you don't need access externally)
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - my-custom-network  # Persist MongoDB data
+
+  nodejs:
+    build:
+      context: ./server  # The backend folder where Dockerfile is located
+    container_name: nodejs-app
+    ports:
+      - "7001:7001"
+    environment:
+      MONGO_URI: mongodb://mongo:27017/mydb  # MongoDB URI for connecting to the database inside the Docker network
+    depends_on:
+      - mongodb  # Ensure MongoDB starts before the Node.js app
+    networks:
+      - my-custom-network  # Connect the Node.js app to the custom Docker network
+
+  react:
+    build:
+      context: ./LGU  # The frontend folder where Dockerfile is located
+    container_name: react-app
+    stdin_open: true
+    ports:
+      - "5173:80"  # Expose Vite's default port for development
+    depends_on:
+      - nodejs
+    networks:
+      - my-custom-network  # Connect the React app to the custom Docker network
+
+networks:
+  my-custom-network:  # Custom Docker network for the services
+    driver: bridge
+
+volumes:
+  mongodb_data: 
+    driver: local  # Docker volume for persistent MongoDB data
