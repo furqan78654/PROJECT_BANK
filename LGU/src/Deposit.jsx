@@ -59,7 +59,7 @@ function Deposit() {
     e.preventDefault();
     
     axios
-      .post("http://nodejs-service:7001/deposit", { account, amount })
+      .post("http://backend-service:7001/deposit", { account, amount })
       .then((result) => {
         if (result.status === 200) {
             console.log(result)

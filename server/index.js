@@ -9,28 +9,13 @@ const app = express()
 app.use (express.json())  //convert data to json
 app.use (cors())
 //pass connection string plus db name
-mongoose.connect(process.env.MONGODB_URL);
+mongoose.connect('mongodb://mongo-service:27017/mydb');
+
 app.post("/register", (req,res)=> {
     UserModel.create(req.body)
     .then(users => res.json (users))
     .catch (err => res.json(err))
 })
-app.post('/add-account', (req, res) => {
-  const { name, account, email, phone, address, balance } = req.body;
-
-  const newAccount = new AccountModel({
-      name,
-      account,
-      email,
-      phone,
-      address,
-      balance
-  });
-
-  newAccount.save()
-      .then(() => res.status(200).send('Account added successfully'))
-      .catch((err) => res.status(500).send('Error: ' + err));
-});
 app.post("/withdrawal", async (req, res) => {
   const { account, amount } = req.body;
   const parsedAmount = parseFloat(amount);
@@ -233,5 +218,5 @@ app.get("/home", (req,res)=> {
 })
 
 app.listen(process.env.PORT, () => {
-   console.log(`mongodb://mongo-service:27017/mydb`);
+   console.log(`LGU Server running on http://localhost:${process.env.PORT} 27-dec`);
 });

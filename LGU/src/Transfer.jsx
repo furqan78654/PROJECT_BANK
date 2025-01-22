@@ -32,7 +32,7 @@ function Transfer() {
     }
 
     axios
-      .post("http://nodejs-service:7001/transfer", { fromAccount, toAccount, amount })
+      .post("http://backend-service:7001/transfer", { fromAccount, toAccount, amount })
       .then((result) => {
         if (result.data.message === "Transfer successful") {
           const { fromAccountName, toAccountName, fromBalance, toBalance, amount } = result.data;

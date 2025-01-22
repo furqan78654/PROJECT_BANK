@@ -24,7 +24,7 @@ function Balance() {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        axios.post('http://nodejs-service:7001/balance', { account })
+        axios.post('http://backend-service:7001/balance', { account })
             .then(result => {
                 const { balance } = result.data;  // Assuming result.data contains balance
                 setBalance(balance);  // Set balance for alert

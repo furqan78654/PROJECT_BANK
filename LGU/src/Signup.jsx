@@ -14,7 +14,7 @@ function Signup() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://nodejs-service:7001/register', { name, email, password })
+        axios.post('http://backend-service:7001/register', { name, email, password })
             .then(result => {
                 navigate("/login");
                 console.log(result);

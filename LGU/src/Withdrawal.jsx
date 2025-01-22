@@ -23,7 +23,7 @@ function Withdrawal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await axios.post("http://nodejs-service:7001/withdrawal", {
+      const result = await axios.post("http://backend-service:7001/withdrawal", {
         account,
         amount,
       });
