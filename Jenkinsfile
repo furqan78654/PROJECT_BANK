@@ -1,28 +1,18 @@
 pipeline {
     agent any
-    
-    environment {
-        // Define Docker Hub and GitHub credentials
-        DOCKER_HUB_CREDENTIALS = 'docker' // Docker credentials ID
-        GITHUB_CREDENTIALS = 'github' // GitHub credentials ID
-        REPO_URL = 'https://github.com/furqan78654/PROJECT_BANK.git' // Your GitHub repo URL
-        DOCKER_USER = credentials('docker') // Docker credentials
-        GITHUB_USER = credentials('github') // GitHub credentials
-    }
 
     stages {
-        stage('Clone Repository') {
+        stage('Clean Workspace') {
             steps {
-                script {
-                    // Clone the PROJECT_BANK repo from GitHub and check out the 'features' branch
-                    git credentialsId: 'github', url: "${REPO_URL}", branch: 'features'
-                }
+                cleanWs() // Ensure the workspace is clean before cloning
             }
         }
 
-        stage('Clean Workspace') {
+        stage('Clone Repository') {
             steps {
-                cleanWs() // Clean workspace after repository is checked out
+                script {
+                    git credentialsId: 'github', url: 'https://github.com/furqan78654/PROJECT_BANK.git', branch: 'features'
+                }
             }
         }
 
@@ -30,7 +20,6 @@ pipeline {
             steps {
                 script {
                     dir('LGU') {
-                        // Build the frontend Docker image with tag
                         docker.build('syedfurqanjaved/frontend:latest')
                     }
                 }
@@ -41,7 +30,6 @@ pipeline {
             steps {
                 script {
                     dir('server') {
-                        // Build the backend Docker image with tag
                         docker.build('syedfurqanjaved/backend:latest')
                     }
                 }
@@ -51,14 +39,11 @@ pipeline {
         stage('Push Docker Images to Docker Hub') {
             steps {
                 script {
-                    // Login to Docker Hub
-                    withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                        sh 'docker push syedfurqanjaved/frontend:latest'
+                        sh 'docker push syedfurqanjaved/backend:latest'
                     }
-
-                    // Push frontend and backend images to Docker Hub
-                    sh 'docker push syedfurqanjaved/frontend:latest'
-                    sh 'docker push syedfurqanjaved/backend:latest'
                 }
             }
         }
@@ -66,9 +51,7 @@ pipeline {
         stage('Update Kubernetes Manifests') {
             steps {
                 script {
-                    // Go to the 'manifest' folder where deployment YAML files are stored
                     dir('manifest') {
-                        // Update frontend and backend images in the Kubernetes manifests
                         sh """
                         sed -i 's|image: .*frontend.*|image: syedfurqanjaved/frontend:latest|' frontend-deployment.yaml
                         sed -i 's|image: .*backend.*|image: syedfurqanjaved/backend:latest|' backend-deployment.yaml
@@ -82,7 +65,6 @@ pipeline {
         stage('Deploy to Kubernetes via ArgoCD') {
             steps {
                 script {
-                    // Apply the updated ArgoCD manifest
                     sh 'kubectl apply -f manifest/argocd-deployment.yaml'
                 }
             }
