@@ -3,10 +3,10 @@ pipeline {
     
     environment {
         // Define Docker Hub and GitHub credentials
-        DOCKER_HUB_CREDENTIALS = 'dockerhub' // Docker credentials ID
+        DOCKER_HUB_CREDENTIALS = 'docker' // Docker credentials ID
         GITHUB_CREDENTIALS = 'github' // GitHub credentials ID
         REPO_URL = 'https://github.com/furqan78654/PROJECT_BANK.git' // Your GitHub repo URL
-        DOCKER_USER = credentials('dockerhub') // Docker credentials
+        DOCKER_USER = credentials('docker') // Docker credentials
         GITHUB_USER = credentials('github') // GitHub credentials
     }
 
