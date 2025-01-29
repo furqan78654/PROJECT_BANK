@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
+  name: mongo-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: mongo
   template:
     metadata:
       labels:
-        app: backend
+        app: mongo
     spec:
       containers:
-        - name: backend
-          image: project_bank-backend:latest
+        - name: mongo
+          image: 531135904221.dkr.ecr.us-east-1.amazonaws.com/mongo
           imagePullPolicy: Never
           ports:
-            - containerPort: 7001
+            - containerPort: 27017
           resources:
             requests:
               memory: "512Mi" # Minimum memory requested
@@ -30,13 +30,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-service
+  name: mongo-service
 spec:
   selector:
-    app: backend
+    app: mongo
   ports:
     - protocol: TCP
-      port: 7001
-      targetPort: 7001
-      # nodePort: 30001
+      port: 27017
+      targetPort: 27017
   type: ClusterIP
+
+
