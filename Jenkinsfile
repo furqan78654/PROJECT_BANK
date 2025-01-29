@@ -24,8 +24,8 @@ pipeline {
                     sh 'git status'
                     sh 'git branch'
                     
-                    // Clone the PROJECT_BANK repo from GitHub
-                    git credentialsId: 'github', url: "${REPO_URL}"
+                    // Clone the PROJECT_BANK repo from GitHub and check out the 'features' branch
+                    git credentialsId: 'github', url: "${REPO_URL}", branch: 'features'
                 }
             }
         }
