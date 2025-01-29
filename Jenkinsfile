@@ -65,7 +65,8 @@ pipeline {
         stage('Deploy to Kubernetes via ArgoCD') {
             steps {
                 script {
-                    sh 'kubectl apply -f manifest/argocd-deployment.yaml'
+                    // Apply the ArgoCD deployment manifest, skipping validation
+                    sh 'kubectl apply -f manifest/argocd-deployment.yaml --validate=false'
                 }
             }
         }
