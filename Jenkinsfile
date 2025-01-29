@@ -11,9 +11,19 @@ pipeline {
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs() // Clean workspace to ensure no conflicts
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 script {
+                    // Debugging: Check Git status and branch info
+                    sh 'git status'
+                    sh 'git branch'
+                    
                     // Clone the PROJECT_BANK repo from GitHub
                     git credentialsId: 'github', url: "${REPO_URL}"
                 }
@@ -51,8 +61,8 @@ pipeline {
                     }
 
                     // Push frontend and backend images to Docker Hub
-                    sh 'syedfurqanjaved/frontend:latest'
-                    sh 'syedfurqanjaved/backend:latest'
+                    sh 'docker push syedfurqanjaved/frontend:latest'
+                    sh 'docker push syedfurqanjaved/backend:latest'
                 }
             }
         }
